@@ -53,6 +53,11 @@ conda install jupyter matplotlib "python==${PYTHON_VERSION}"
 pip install jgscm==0.1.7
 
 if [[ "${ROLE}" == 'Master' ]]; then
+  conda install jupyter
+  if gsutil -q stat "gs://$DATAPROC_BUCKET/notebooks/**"; then
+      echo "Pulling notebooks directory to cluster master node..."
+      gsutil -m cp -r gs://$DATAPROC_BUCKET/notebooks /root/
+  fi
   ./dataproc-initialization-actions/jupyter/internal/setup-jupyter-kernel.sh
   ./dataproc-initialization-actions/jupyter/internal/launch-jupyter-kernel.sh
 fi
